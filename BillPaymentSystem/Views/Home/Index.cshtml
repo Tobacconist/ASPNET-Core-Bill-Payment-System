@@ -1,0 +1,33 @@
+﻿<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Fatura Ödeme Sistemi</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">Lütfen ödemek istediğiniz fatura bilgilerini giriniz.</p>
+
+                    <form asp-controller="Baslangic" asp-action="Odeme" method="get">
+                        <div class="mb-3">
+                            <label class="form-label">Fatura Numarası</label>
+                            <input type="number" name="FaturaNo" class="form-control" placeholder="Örn: 123" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Ödeme Tarihi</label>
+                            <input type="date" name="OdemeTarihi" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Sorgula ve Öde</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center bg-light">
+                    <small>Geciken ödemelerde günlük %5 faiz uygulanmaktadır.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
