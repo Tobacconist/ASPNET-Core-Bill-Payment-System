@@ -23,6 +23,6 @@ namespace BillPaymentSystem.Models
             Math.Max(0, (odemeTarihi.Date - Tarih.Date).Days);
 
         public decimal GecikmeliTutar(DateTime odemeTarihi) =>
-            Tutar + Tutar * GunlukGecikmeOrani * GecikmeGunu(odemeTarihi);
+            Math.Round(Tutar + Tutar * GunlukGecikmeOrani * GecikmeGunu(odemeTarihi), 2, MidpointRounding.AwayFromZero);
     }
 }
