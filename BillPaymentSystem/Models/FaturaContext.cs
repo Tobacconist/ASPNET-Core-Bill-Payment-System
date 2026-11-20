@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace BillPaymentSystem.Models
 {
@@ -15,9 +14,9 @@ namespace BillPaymentSystem.Models
 
             // Veritabanı ilk oluştuğunda içine eklenecek örnek veriler
             modelBuilder.Entity<Fatura>().HasData(
-                new Fatura() { AboneNo = 1, Durum = false, FaturaType = "Electricity", Name = "Durmuş Durarmış", Tarih = DateTime.Parse("07/09/2024"), Tutar = 456m, FaturaNo = 1 },
-                new Fatura() { AboneNo = 32, Durum = false, FaturaType = "Water", Name = "Aslı Mert", Tarih = DateTime.Parse("07/09/2024"), Tutar = 654m, FaturaNo = 2 },
-                new Fatura() { AboneNo = 123, Durum = false, FaturaType = "Internet", Name = "Doğukan Gün", Tarih = DateTime.Parse("07/09/2024"), Tutar = 423m, FaturaNo = 3 }
+                new Fatura() { AboneNo = 1, Durum = false, FaturaType = "Elektrik", Name = "Durmuş Durarmış", Tarih = new DateTime(2024, 9, 7), Tutar = 456m, FaturaNo = 1 },
+                new Fatura() { AboneNo = 32, Durum = false, FaturaType = "Su", Name = "Aslı Mert", Tarih = new DateTime(2024, 9, 7), Tutar = 654m, FaturaNo = 2 },
+                new Fatura() { AboneNo = 123, Durum = false, FaturaType = "İnternet", Name = "Doğukan Gün", Tarih = new DateTime(2024, 9, 7), Tutar = 423m, FaturaNo = 3 }
             );
         }
     }
