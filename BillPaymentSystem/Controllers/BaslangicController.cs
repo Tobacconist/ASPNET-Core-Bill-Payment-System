@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using BillPaymentSystem.Models;
 
 namespace BillPaymentSystem.Controllers
@@ -12,6 +13,7 @@ namespace BillPaymentSystem.Controllers
             _context = context;
         }
 
+        [Authorize]
         public IActionResult AdminPanel()
         {
             return View(PanelModeli());
@@ -19,6 +21,7 @@ namespace BillPaymentSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult Sil(int FaturaNo)
         {
             var fatura = _context.Faturas.Find(FaturaNo);
@@ -32,6 +35,7 @@ namespace BillPaymentSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult YeniFaturaEkle([Bind("AboneNo,Name,FaturaType,Tarih,Tutar")] Fatura fatura)
         {
             if (!ModelState.IsValid)
