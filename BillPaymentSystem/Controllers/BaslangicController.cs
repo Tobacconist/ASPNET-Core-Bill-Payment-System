@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BillPaymentSystem.Models;
-using System;
-using System.Linq;
 
 namespace BillPaymentSystem.Controllers
 {
@@ -14,18 +12,14 @@ namespace BillPaymentSystem.Controllers
             _context = context;
         }
 
-        // --- ADMİN PANELİ İŞLEMLERİ ---
-
-        // Faturaları Listeleme
         public IActionResult AdminPanel()
         {
-            var faturalistesi = _context.Faturas.ToList();
-            return View(faturalistesi);
+            return View(PanelModeli());
         }
 
-        // Fatura Silme
         [HttpPost]
-        public IActionResult AdminPanel(int FaturaNo)
+        [ValidateAntiForgeryToken]
+        public IActionResult Sil(int FaturaNo)
         {
             var fatura = _context.Faturas.Find(FaturaNo);
             if (fatura != null)
@@ -33,24 +27,24 @@ namespace BillPaymentSystem.Controllers
                 _context.Faturas.Remove(fatura);
                 _context.SaveChanges();
             }
-            var faturalistesi = _context.Faturas.ToList();
-            return View("AdminPanel", faturalistesi);
+            return RedirectToAction(nameof(AdminPanel));
         }
 
-        // Yeni Fatura Ekleme
         [HttpPost]
-        public IActionResult YeniFaturaEkle(Fatura fatura)
+        [ValidateAntiForgeryToken]
+        public IActionResult YeniFaturaEkle([Bind("AboneNo,Name,FaturaType,Tarih,Tutar")] Fatura fatura)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Faturas.Add(fatura);
-                _context.SaveChanges();
-                return RedirectToAction("AdminPanel");
+                var model = PanelModeli();
+                model.YeniFatura = fatura;
+                return View(nameof(AdminPanel), model);
             }
-            return View(fatura);
-        }
 
-        // --- MÜŞTERİ ÖDEME İŞLEMİ ---
+            _context.Faturas.Add(fatura);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(AdminPanel));
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -84,5 +78,8 @@ namespace BillPaymentSystem.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        private AdminPanelViewModel PanelModeli() =>
+            new() { Faturalar = _context.Faturas.OrderBy(f => f.FaturaNo).ToList() };
     }
 }

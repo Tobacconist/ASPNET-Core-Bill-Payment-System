@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BillPaymentSystem.Models.Fatura>
+﻿@model BillPaymentSystem.Models.AdminPanelViewModel
 
 @{
     ViewData["Title"] = "Admin Fatura Paneli";
@@ -6,6 +6,41 @@
 
 <div class="container mt-4">
     <h2 class="mb-4">Admin Fatura Yönetim Paneli</h2>
+
+    <form asp-action="YeniFaturaEkle" method="post" class="card card-body mb-4">
+        <h5 class="mb-3">Yeni Fatura</h5>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row g-3">
+            <div class="col-md-2">
+                <label asp-for="YeniFatura.AboneNo" class="form-label">Abone No</label>
+                <input asp-for="YeniFatura.AboneNo" class="form-control" />
+                <span asp-validation-for="YeniFatura.AboneNo" class="text-danger"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="YeniFatura.Name" class="form-label">Müşteri Adı</label>
+                <input asp-for="YeniFatura.Name" class="form-control" />
+                <span asp-validation-for="YeniFatura.Name" class="text-danger"></span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="YeniFatura.FaturaType" class="form-label">Tür</label>
+                <input asp-for="YeniFatura.FaturaType" class="form-control" placeholder="Elektrik" />
+                <span asp-validation-for="YeniFatura.FaturaType" class="text-danger"></span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="YeniFatura.Tarih" class="form-label">Tarih</label>
+                <input asp-for="YeniFatura.Tarih" type="date" class="form-control" />
+                <span asp-validation-for="YeniFatura.Tarih" class="text-danger"></span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="YeniFatura.Tutar" class="form-label">Tutar</label>
+                <input asp-for="YeniFatura.Tutar" class="form-control" />
+                <span asp-validation-for="YeniFatura.Tutar" class="text-danger"></span>
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Ekle</button>
+            </div>
+        </div>
+    </form>
 
     <table class="table table-hover table-striped border">
         <thead class="table-dark">
@@ -21,7 +56,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var fatura in Model)
+            @foreach (var fatura in Model.Faturalar)
             {
                 <tr>
                     <td>@fatura.FaturaNo</td>
@@ -36,7 +71,7 @@
                         </span>
                     </td>
                     <td>
-                        <form asp-action="AdminPanel" method="post" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
+                        <form asp-action="Sil" method="post" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
                             <input type="hidden" name="FaturaNo" value="@fatura.FaturaNo" />
                             <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
                         </form>
@@ -46,3 +81,7 @@
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
