@@ -6,9 +6,17 @@
                     <h4 class="mb-0">Fatura Ödeme Sistemi</h4>
                 </div>
                 <div class="card-body">
+                    @if (TempData["Basari"] is string basari)
+                    {
+                        <div class="alert alert-success">@basari</div>
+                    }
+                    @if (TempData["Hata"] is string hata)
+                    {
+                        <div class="alert alert-danger">@hata</div>
+                    }
                     <p class="text-muted small">Lütfen ödemek istediğiniz fatura bilgilerini giriniz.</p>
 
-                    <form asp-controller="Baslangic" asp-action="Odeme" method="get">
+                    <form asp-controller="Baslangic" asp-action="Odeme" method="post">
                         <div class="mb-3">
                             <label class="form-label">Fatura Numarası</label>
                             <input type="number" name="FaturaNo" class="form-control" placeholder="Örn: 123" required />

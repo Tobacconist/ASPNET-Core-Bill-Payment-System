@@ -52,30 +52,36 @@ namespace BillPaymentSystem.Controllers
 
         // --- MÜŞTERİ ÖDEME İŞLEMİ ---
 
-        // Fatura Ödeme ve Gecikme Cezası Hesaplama
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Odeme(int FaturaNo, DateTime OdemeTarihi)
         {
             var fatura = _context.Faturas.FirstOrDefault(p => p.FaturaNo == FaturaNo);
-            double odenenTutar = 0;
 
-            if (fatura != null && !fatura.Durum)
+            if (fatura == null)
             {
-                DateTime GerekenTarih = fatura.Tarih;
-                double gecikmeGun = (OdemeTarihi - GerekenTarih).TotalDays;
-
-                // Eğer ödeme tarihi geçmişse günlük %5 oranında ceza uygula
-                if (gecikmeGun > 0)
-                {
-                    double Oran = 5;
-                    double gecikmeTutar = fatura.Tutar * Oran * gecikmeGun;
-                    fatura.Tutar += (int)gecikmeTutar;
-                }
-
-                fatura.Durum = true; // Ödendi olarak işaretle
-                odenenTutar = fatura.Tutar;
-                _context.SaveChanges();
+                TempData["Hata"] = "Bu numaraya ait fatura bulunamadı.";
             }
-            // İşlem bitince müşterinin kendi sayfasına yönlendir
+            else if (fatura.Durum)
+            {
+                TempData["Hata"] = "Bu fatura daha önce ödenmiş.";
+            }
+            else if (OdemeTarihi.Date < fatura.Tarih.Date)
+            {
+                TempData["Hata"] = "Ödeme tarihi fatura tarihinden önce olamaz.";
+            }
+            else
+            {
+                fatura.Tutar = fatura.GecikmeliTutar(OdemeTarihi);
+                fatura.Durum = true;
+                _context.SaveChanges();
+
+                var gecikme = fatura.GecikmeGunu(OdemeTarihi);
+                TempData["Basari"] = gecikme > 0
+                    ? $"{fatura.Tutar:C2} ödendi ({gecikme} gün gecikme cezası dahil)."
+                    : $"{fatura.Tutar:C2} ödendi.";
+            }
+
             return RedirectToAction("Index", "Home");
         }
     }
