@@ -1,30 +1,38 @@
-# Bill Payment & Penalty Calculation System
+# BillPaymentSystem
 
-> A web-based utility bill management platform developed to streamline customer payments and administrative tasks.
+A bill payment web app. A customer pays a bill by entering the bill number and the payment date, and a late fee is added automatically when the payment is overdue. An admin can list, add and delete bills.
 
-This project was built during my software engineering internship to apply backend development concepts using **ASP.NET Core MVC** and **Entity Framework Core**. The core objective was to design a robust system that handles financial logic, specifically identifying overdue bills and calculating late fee penalties automatically.
+ASP.NET Core MVC (.NET 10), Entity Framework Core, SQL Server LocalDB.
 
-## Key Features & Learning Outcomes
+## Technical decisions
 
-* **Automated Penalty Logic:** Programmed a business rule in the Controller that calculates overdue days and applies a dynamic 5% daily penalty rate to unpaid bills past their due date.
-* **MVC Architecture:** Structured the application clearly with Models (`Fatura`), Razor Page Views, and dedicated Controllers (`BaslangicController`) to separate concerns and ensure maintainability.
-* **Database Management:** Utilized **Entity Framework Core** for seamless database interactions. Configured a `DbContext` with initial seed data to test the application logic effectively.
-* **Admin Dashboard:** Created an administrative interface to perform full CRUD operations (Add, View, Delete) on utility bills (Electricity, Water, Internet).
+- The late fee is 5% of the bill amount per day and is calculated in `Fatura.GecikmeliTutar`. It does not depend on the controller, so it can be unit tested on its own.
+- Amounts are stored as `decimal(18,2)`, and the total including the late fee is rounded to the nearest kuruş.
+- Operations that change data, such as payment and delete, use POST with an antiforgery token.
+- The admin panel is protected with cookie authentication. There is no Identity setup and no extra table. A single admin account is read from configuration, and the password is stored as a `PasswordHasher` hash, never as plain text.
+- The add-bill form uses `[Bind]` so only the expected fields are accepted.
 
-## Built With
+## Running locally
 
-* C# & ASP.NET Core MVC
-* Entity Framework Core
-* SQL Server (LocalDB)
-* HTML/CSS (Bootstrap)
+Requirements: .NET 10 SDK and SQL Server LocalDB.
 
-##  Development Process & Observations
+```powershell
+cd BillPaymentSystem
+dotnet tool restore
+dotnet ef database update
+dotnet run
+```
 
-One of the key challenges during development was ensuring the accurate integration of the database using Entity Framework Core. After writing a proper context class and configuring the connection string, the data flow became highly efficient. Debugging the logic for the overdue payment calculations helped me significantly improve my problem-solving skills and understanding of real-world financial application constraints.
+The app listens on `http://localhost:5288`. The admin login page is `/Account/Login`. The development username and password are in `appsettings.Development.json`.
 
-## How to Run Locally
+## Tests
 
-1. Clone the repository to your local machine.
-2. Open the solution in **Visual Studio**.
-3. Ensure the `Microsoft.EntityFrameworkCore.SqlServer` NuGet package is installed.
-4. Run the project (`F5`). Entity Framework Core will automatically handle the database creation and seed initial data.
+The late fee calculation is tested with xUnit in the `BillPaymentSystem.Tests` project. No database is needed. Run it from the solution folder:
+
+```powershell
+dotnet test
+```
+
+## Other environments
+
+In any other environment, set the `AdminAuth__Username` and `AdminAuth__PasswordHash` environment variables (or use User Secrets). Override the connection string with the `ConnectionStrings:FaturaDb` key.
